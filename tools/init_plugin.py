@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIP_DIRS = {".git", ".pytest_cache", ".ruff_cache", "__pycache__", ".venv", "dist", "build"}
 SKIP_FILES = {"tools/init_plugin.py", "tests/test_init_tool.py", "LICENSE"}
 NAME_RE = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
+GITHUB_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$")
 
 
 def text_files(root: Path):
@@ -45,6 +46,14 @@ def main(argv: list[str] | None = None) -> int:
         "--name", required=True, help="distribution name, lowercase with dashes, e.g. my-plugin"
     )
     parser.add_argument("--extension-id", help="default: org.vllm-hust.<name>")
+    parser.add_argument("--maintainer-name", required=True, help="directly responsible maintainer")
+    parser.add_argument("--maintainer-github", required=True, help="GitHub login of the maintainer")
+    parser.add_argument(
+        "--advisor-status",
+        required=True,
+        choices=("none", "unknown"),
+        help="use none only when the absence of an advisor is confirmed; otherwise use unknown",
+    )
     parser.add_argument("--root", type=Path, default=ROOT, help="repository root (default: this repo)")
     parser.add_argument("--keep-tool", action="store_true", help="keep tools/init_plugin.py and its test")
     parser.add_argument("--dry-run", action="store_true")
@@ -54,11 +63,20 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--name must be lowercase letters/digits separated by single dashes")
     if args.name == "example-plugin":
         parser.error("choose a name other than the template's own")
+    if not args.maintainer_name.strip():
+        parser.error("--maintainer-name must not be empty")
+    if not GITHUB_RE.fullmatch(args.maintainer_github):
+        parser.error("--maintainer-github must be a valid GitHub login")
 
     module = args.name.replace("-", "_")
     env = module.upper()
     root = args.root.resolve()
     changed = []
+    literal_replacements = {
+        "EXAMPLE_MAINTAINER_NAME": args.maintainer_name.strip(),
+        "EXAMPLE_MAINTAINER_GITHUB": args.maintainer_github,
+        "EXAMPLE_ADVISOR_STATUS": args.advisor_status,
+    }
     for path in text_files(root):
         old = path.read_text(encoding="utf-8")
         new = old
@@ -69,6 +87,8 @@ def main(argv: list[str] | None = None) -> int:
             .replace("example_plugin", module)
             .replace("EXAMPLE_PLUGIN", env)
         )
+        for old_value, new_value in literal_replacements.items():
+            new = new.replace(old_value, new_value)
         if new != old:
             changed.append(path.relative_to(root).as_posix())
             if not args.dry_run:

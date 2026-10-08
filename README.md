@@ -15,11 +15,18 @@ real extractions; see [docs/PITFALLS.md](docs/PITFALLS.md).
 2. Rename the placeholders in place:
 
    ```bash
-   python tools/init_plugin.py --name my-plugin
+   python tools/init_plugin.py \
+     --name my-plugin \
+     --maintainer-name "Your Name" \
+     --maintainer-github your-login \
+     --advisor-status unknown
    ```
 
    This rewrites `example-plugin` / `example_plugin` / `EXAMPLE_PLUGIN`, renames the package
    directory and removes the tool. Add `--dry-run` to preview, `--keep-tool` to keep it.
+   Use `--advisor-status none` only when no advisor role applies. Use `unknown` when it has not
+   been established; these are deliberately different states. If advisors apply, change the
+   generated metadata status to `declared` and list each name, GitHub login, and relationship.
 3. Edit `src/<module>/plugin.py`: the four `TODO` constants and `_make_replacement`.
 4. Replace `tests/fake_host.py` with a copy of the **verbatim** host code you replace, and keep the
    differential tests: they compare your replacement with that original on many random inputs.
@@ -39,6 +46,25 @@ real extractions; see [docs/PITFALLS.md](docs/PITFALLS.md).
 | Differential tests | The strongest evidence of behavioural equivalence for a runtime patch. |
 | `tools/init_plugin.py` | GitHub templates do not substitute variables. |
 | `docs/PITFALLS.md`, `docs/REPORT_TEMPLATE.md` | The lessons and a report skeleton that asks for advantages *and* limits. |
+| `MOD_METADATA.json` | Canonical repository, direct responsibility, advisor state, lifecycle boundary, scope, and qualified evidence claims. |
+
+## Repository metadata contract
+
+`MOD_METADATA.json` is the human- and machine-readable summary of the MOD. Keep it aligned with
+the README and the extension manifest. A repository copied from this template is not ready for
+review until it has:
+
+- the public `vLLM-HUST` canonical repository URL, with no private source-repository link or local path;
+- at least one directly responsible maintainer;
+- an explicit advisor state: `none`, `unknown`, or `declared` with a non-empty advisor list;
+- `default_enabled: false`, an activation contract, and a rollback contract;
+- a narrow mechanism scope and workload-qualified evidence;
+- no performance claim unless its evidence index records the exact commits, dirty state, hardware,
+  model, runtime, graph mode, command, repetitions, and evidence label.
+
+Historical source commit hashes may be retained for provenance without presenting a private
+organization as the canonical home. A microbenchmark, simulation, replay, or projected profile
+must be labelled as such and must not be restated as an online end-to-end gain.
 
 ## Switches
 

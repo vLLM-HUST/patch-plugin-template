@@ -1,0 +1,34 @@
+{
+  "schema_version": "vllm-hust-mod-metadata-v1",
+  "mod_id": "example-plugin",
+  "display_name": "Example Plugin",
+  "canonical_repository": "https://github.com/vLLM-HUST/example-plugin",
+  "responsibility": {
+    "organization": "vLLM-HUST",
+    "maintainers": [
+      {
+        "name": "EXAMPLE_MAINTAINER_NAME",
+        "github": "EXAMPLE_MAINTAINER_GITHUB"
+      }
+    ],
+    "advisor_status": "EXAMPLE_ADVISOR_STATUS",
+    "advisors": []
+  },
+  "lifecycle": {
+    "status": "experimental",
+    "default_enabled": false,
+    "activation_contract": "explicit enable flag plus a compatible host source guard",
+    "rollback_contract": "set the kill switch or remove the plugin"
+  },
+  "scope": {
+    "mechanism": "REPLACE_WITH_ONE_MECHANISM",
+    "supported_workloads": [],
+    "out_of_scope": []
+  },
+  "evidence": {
+    "qualification": "unqualified",
+    "latest_result": null,
+    "index": "docs/REPORT_TEMPLATE.md",
+    "performance_claims": []
+  }
+}

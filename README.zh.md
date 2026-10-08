@@ -13,11 +13,16 @@
 2. 就地替换占位名:
 
    ```bash
-   python tools/init_plugin.py --name my-plugin
+   python tools/init_plugin.py \
+     --name my-plugin \
+     --maintainer-name "Your Name" \
+     --maintainer-github your-login \
+     --advisor-status unknown
    ```
 
    它会把 `example-plugin` / `example_plugin` / `EXAMPLE_PLUGIN` 全部改掉、重命名包目录,并删除这个
-   工具。`--dry-run` 先预览,`--keep-tool` 保留工具。
+   工具。`--dry-run` 先预览,`--keep-tool` 保留工具。只有在确认不存在指导老师角色时才使用
+   `--advisor-status none`;尚未确认时使用 `unknown`。两者不能混用。
 3. 修改 `src/<module>/plugin.py`:四个 `TODO` 常量和 `_make_replacement`。
 4. 把 `tests/fake_host.py` 换成你要替换的宿主代码的**逐字拷贝**,保留差分测试,它会在大量随机输入上
    对比你的替换和原函数。
@@ -36,6 +41,23 @@
 | 差分测试 | 运行时补丁证明行为等价最有力的证据 |
 | `tools/init_plugin.py` | GitHub 模板不会替换变量 |
 | `docs/PITFALLS.md`、`docs/REPORT_TEMPLATE.md` | 经验教训,以及要求同时写优势和局限的报告骨架 |
+| `MOD_METADATA.json` | 公开主仓、直接负责人、指导关系状态、生命周期边界、适用范围和已资格化证据 |
+
+## 仓库元数据契约
+
+`MOD_METADATA.json` 是 MOD 的机器可读摘要,必须与 README 和 extension manifest 保持一致。
+从模板生成的仓库在送审前必须写清:
+
+- `vLLM-HUST` 下的公开 canonical repository,不把私有来源仓库或本地路径写成主仓;
+- 至少一位直接负责人;
+- 指导关系明确为 `none`、`unknown`,或 `declared` 且列出姓名、GitHub 账号和关系;
+- `default_enabled: false`、启用契约和回滚契约;
+- 单一机制范围与 workload-qualified 证据;
+- 任何性能结论都绑定父仓与依赖提交、dirty 状态、硬件、模型、运行环境、图模式、
+  入口命令、重复次数和 evidence label。
+
+可保留历史来源提交哈希,但不得把私有组织描述成 canonical home。microbenchmark、simulation、
+replay 和 projected profile 必须按真实证据类型标注,不能改写为线上端到端收益。
 
 ## Manifest 版本
 
