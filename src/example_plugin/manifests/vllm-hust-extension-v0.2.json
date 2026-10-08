@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.2-experimental",
+  "extension_id": "org.vllm-hust.example-plugin",
+  "extension_version": "0.1.0.dev0",
+  "kind": "in_process_plugin",
+  "host": {
+    "provider": "vllm",
+    "name": "vllm-hust",
+    "version_range": ">=0.0,<1.0"
+  },
+  "runtime": {
+    "type": "python",
+    "process_scope": "worker",
+    "isolation": "trusted_in_process"
+  },
+  "lifecycle_owner": "vllm",
+  "protocols": [
+    {
+      "name": "vllm.general-plugin",
+      "version_range": null
+    }
+  ],
+  "implementation": [
+    {
+      "type": "python_module",
+      "module": "example_plugin.plugin",
+      "object": "register",
+      "status": "active"
+    }
+  ],
+  "requires_services": [],
+  "components": [
+    {
+      "component_id": "example-plugin",
+      "contracts": ["vllm.general-plugin.experimental"],
+      "execution_planes": ["worker"],
+      "isolation": "trusted_in_process",
+      "implementation_ref": "example_plugin.plugin:register",
+      "permissions": []
+    }
+  ],
+  "activation": {
+    "entry_points": [
+      {
+        "group": "vllm.general_plugins",
+        "name": "example_plugin"
+      }
+    ],
+    "environment": {
+      "VLLM_HUST_EXAMPLE_PLUGIN_ENABLE": "0",
+      "VLLM_HUST_EXAMPLE_PLUGIN_KILL_SWITCH": "0",
+      "VLLM_HUST_EXAMPLE_PLUGIN_EVIDENCE": "1"
+    },
+    "additional_config": {
+      "admission_status": "candidate_not_admitted"
+    }
+  }
+}
