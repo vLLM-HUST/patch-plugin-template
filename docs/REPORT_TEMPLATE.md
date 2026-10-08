@@ -1,6 +1,7 @@
 # <项目名> 项目报告
 
 > 日期:
+> Evidence label: microbenchmark / simulation / replay / projected-profile / real-online-e2e
 > 对象:模型、硬件、并行配置、宿主版本
 > 状态:候选 / 已准入。**结论以实测为准。**
 
@@ -43,4 +44,10 @@
 代码仓库(地址、分支、提交、PR、许可证、描述)、验证产出、数据产出、文档产出、结论性产出、**未产出**。
 
 ## 9. 复现
-命令、脚本、数据口径、产物指纹。
+必须记录:
+
+- canonical repository 与 MOD commit;
+- 父仓提交、所有 submodule/依赖提交、dirty 状态;
+- 硬件型号与卡数、模型与权重版本、运行环境与容器镜像;
+- 图模式、并行配置、入口命令、脚本、数据口径和重复次数;
+- 原始产物路径、SHA-256 和 evidence label。

@@ -22,7 +22,18 @@ def test_init_leaves_no_placeholder_and_the_result_passes(tmp_path):
     work = tmp_path / "demo"
     copy_repo(work)
     out = subprocess.run(
-        [sys.executable, "tools/init_plugin.py", "--name", "demo-plugin"],
+        [
+            sys.executable,
+            "tools/init_plugin.py",
+            "--name",
+            "demo-plugin",
+            "--maintainer-name",
+            "Demo Maintainer",
+            "--maintainer-github",
+            "demo-maintainer",
+            "--advisor-status",
+            "none",
+        ],
         cwd=work,
         capture_output=True,
         text=True,
@@ -42,6 +53,11 @@ def test_init_leaves_no_placeholder_and_the_result_passes(tmp_path):
     assert "org.vllm-hust.demo-plugin" in manifest
     # the host being patched is the user's to fill in, so its placeholder is deliberately left alone
     assert "example-host.worker.compute" in manifest
+    metadata = (work / "MOD_METADATA.json").read_text()
+    assert '"canonical_repository": "https://github.com/vLLM-HUST/demo-plugin"' in metadata
+    assert '"name": "Demo Maintainer"' in metadata
+    assert '"github": "demo-maintainer"' in metadata
+    assert '"advisor_status": "none"' in metadata
 
     result = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"],
@@ -58,7 +74,19 @@ def test_dry_run_changes_nothing(tmp_path):
     copy_repo(work)
     before = (work / "pyproject.toml").read_text()
     out = subprocess.run(
-        [sys.executable, "tools/init_plugin.py", "--name", "demo-plugin", "--dry-run"],
+        [
+            sys.executable,
+            "tools/init_plugin.py",
+            "--name",
+            "demo-plugin",
+            "--maintainer-name",
+            "Demo Maintainer",
+            "--maintainer-github",
+            "demo-maintainer",
+            "--advisor-status",
+            "unknown",
+            "--dry-run",
+        ],
         cwd=work,
         capture_output=True,
         text=True,
@@ -74,10 +102,34 @@ def test_rejects_bad_names(tmp_path):
     copy_repo(work)
     for bad in ("Bad_Name", "-x", "example-plugin"):
         out = subprocess.run(
-            [sys.executable, "tools/init_plugin.py", "--name", bad],
+            [
+                sys.executable,
+                "tools/init_plugin.py",
+                "--name",
+                bad,
+                "--maintainer-name",
+                "Demo Maintainer",
+                "--maintainer-github",
+                "demo-maintainer",
+                "--advisor-status",
+                "unknown",
+            ],
             cwd=work,
             capture_output=True,
             text=True,
             check=False,
         )
         assert out.returncode != 0
+
+
+def test_requires_explicit_responsibility_metadata(tmp_path):
+    work = tmp_path / "demo"
+    copy_repo(work)
+    out = subprocess.run(
+        [sys.executable, "tools/init_plugin.py", "--name", "demo-plugin"],
+        cwd=work,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert out.returncode != 0
