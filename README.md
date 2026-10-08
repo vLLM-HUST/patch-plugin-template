@@ -35,6 +35,7 @@ real extractions; see [docs/PITFALLS.md](docs/PITFALLS.md).
 | Source guard (`inspect.getsource`) | Refuse hosts that are unsupported or already optimised instead of patching speculatively. |
 | `installed` and `runtime_effective` evidence events, with `pid` | "The patch is installed" and "the patch ran" are different facts; the pid shows *which process*. |
 | `bootstrap.child_entry` | Gets the patch into processes the host starts with `spawn`. |
+| Manifest `0.3-experimental` with an exclusive `resource_claims` entry | Lets the manager reject, before launch, two plugins that replace the same host function. Tests keep the claim, the entry points and `plugin.py` consistent. |
 | Differential tests | The strongest evidence of behavioural equivalence for a runtime patch. |
 | `tools/init_plugin.py` | GitHub templates do not substitute variables. |
 | `docs/PITFALLS.md`, `docs/REPORT_TEMPLATE.md` | The lessons and a report skeleton that asks for advantages *and* limits. |
@@ -46,6 +47,17 @@ real extractions; see [docs/PITFALLS.md](docs/PITFALLS.md).
 | `VLLM_HUST_<NAME>_KILL_SWITCH=1` | Always wins. |
 | `VLLM_HUST_<NAME>_ENABLE=1` | Required to install. Default off. `vllm-hust-ext extension enable` alone does **not** set it. |
 | `VLLM_HUST_<NAME>_EVIDENCE=1` | Print `installed` and one `runtime_effective` event per process. |
+
+## Manifest version
+
+The manifest is `vllm-hust-extension-v0.3.json` (`0.3-experimental`), which the extension manager
+looks for before `v0.2`. 0.3 keeps every 0.2 field and adds `resource_claims` and
+`requires_extensions`; those two fields are illegal under 0.2. The 0.3 schema is under a
+compatibility freeze and is not a stable v1 promise. See `docs/manifest-0.3-experimental.md` in
+[`extension-manager`](https://github.com/vLLM-HUST/extension-manager).
+
+The example claims `example-host.worker.compute` exclusively. **Change it together with the four
+`TODO` constants in `plugin.py`**: a test fails if the claim does not name the function you replace.
 
 ## Not included, on purpose
 

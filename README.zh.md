@@ -32,9 +32,20 @@
 | 源码守卫(`inspect.getsource`) | 宿主不认识或已优化时拒绝安装,不做推测性补丁 |
 | 带 `pid` 的 `installed` 与 `runtime_effective` 事件 | "补丁装了"和"补丁跑了"是两件事,pid 说明是哪个进程 |
 | `bootstrap.child_entry` | 让补丁进入宿主用 `spawn` 启动的进程 |
+| Manifest `0.3-experimental` 加独占的 `resource_claims` | 让管理器在启动前就拒绝两个替换同一宿主函数的插件。测试会检查声明、入口点和 `plugin.py` 三者一致 |
 | 差分测试 | 运行时补丁证明行为等价最有力的证据 |
 | `tools/init_plugin.py` | GitHub 模板不会替换变量 |
 | `docs/PITFALLS.md`、`docs/REPORT_TEMPLATE.md` | 经验教训,以及要求同时写优势和局限的报告骨架 |
+
+## Manifest 版本
+
+manifest 是 `vllm-hust-extension-v0.3.json`(`0.3-experimental`),扩展管理器会优先找它,其次才是 `v0.2`。
+0.3 保留 0.2 的全部字段,新增 `resource_claims` 和 `requires_extensions`,这两个字段在 0.2 下不合法。
+0.3 目前处于兼容性冻结,不是稳定的 v1 承诺,详见 [`extension-manager`](https://github.com/vLLM-HUST/extension-manager)
+的 `docs/manifest-0.3-experimental.md`。
+
+示例独占声明了 `example-host.worker.compute`。**要和 `plugin.py` 里四个 `TODO` 常量一起改**:声明没有指向你
+真正替换的函数时,测试会失败。
 
 ## 刻意不包含
 

@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8", "ruff"]
+test = ["pytest>=8", "ruff", "tomli>=2; python_version < '3.11'"]
 
 [project.entry-points."vllm.general_plugins"]
 example_plugin = "example_plugin.plugin:register"

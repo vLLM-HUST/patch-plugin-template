@@ -38,8 +38,10 @@ def test_init_leaves_no_placeholder_and_the_result_passes(tmp_path):
             text = path.read_text(encoding="utf-8", errors="ignore")
             assert not any(token in text for token in TOKENS), f"placeholder left in {path.relative_to(work)}"
 
-    manifest = (work / "src" / "demo_plugin" / "manifests" / "vllm-hust-extension-v0.2.json").read_text()
+    manifest = (work / "src" / "demo_plugin" / "manifests" / "vllm-hust-extension-v0.3.json").read_text()
     assert "org.vllm-hust.demo-plugin" in manifest
+    # the host being patched is the user's to fill in, so its placeholder is deliberately left alone
+    assert "example-host.worker.compute" in manifest
 
     result = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"],
