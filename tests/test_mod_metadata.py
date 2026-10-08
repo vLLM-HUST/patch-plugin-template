@@ -11,7 +11,7 @@ GITHUB_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$")
 def test_mod_metadata_is_explicit_and_safe():
     metadata = json.loads((ROOT / "MOD_METADATA.json").read_text(encoding="utf-8"))
     assert metadata["schema_version"] == "vllm-hust-mod-metadata-v1"
-    assert metadata["canonical_repository"] == (f"https://github.com/vLLM-HUST/{metadata['mod_id']}")
+    assert metadata["canonical_repository"] == (f"https://github.com/vLLM-HUST/{metadata['repository']}")
 
     responsibility = metadata["responsibility"]
     assert responsibility["organization"] == "vLLM-HUST"

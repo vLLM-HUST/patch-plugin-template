@@ -1,6 +1,7 @@
 {
   "schema_version": "vllm-hust-mod-metadata-v1",
   "mod_id": "example-plugin",
+  "repository": "example-plugin",
   "display_name": "Example Plugin",
   "canonical_repository": "https://github.com/vLLM-HUST/example-plugin",
   "responsibility": {
