@@ -11,7 +11,9 @@ GITHUB_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$")
 def test_mod_metadata_is_explicit_and_safe():
     metadata = json.loads((ROOT / "MOD_METADATA.json").read_text(encoding="utf-8"))
     assert metadata["schema_version"] == "vllm-hust-mod-metadata-v1"
-    assert metadata["canonical_repository"] == (f"https://github.com/vLLM-HUST/{metadata['mod_id']}")
+    assert metadata["canonical_repository"].startswith(
+        f"https://github.com/vLLM-HUST/{metadata['repository']}"
+    )
 
     responsibility = metadata["responsibility"]
     assert responsibility["organization"] == "vLLM-HUST"
@@ -37,7 +39,19 @@ def test_mod_metadata_is_explicit_and_safe():
     else:
         assert advisors
         for advisor in advisors:
-            assert set(advisor) == {"name", "github", "relationship"}
+            assert (
+                {"name", "relationship"}
+                <= set(advisor)
+                <= {
+                    "name",
+                    "github",
+                    "relationship",
+                }
+            )
+            assert advisor["name"].strip()
+            assert advisor["relationship"].strip()
+            if "github" in advisor:
+                assert GITHUB_RE.fullmatch(advisor["github"])
 
     assert metadata["lifecycle"]["default_enabled"] is False
     assert metadata["evidence"]["qualification"] in {

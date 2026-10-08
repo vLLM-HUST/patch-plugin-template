@@ -26,7 +26,8 @@ real extractions; see [docs/PITFALLS.md](docs/PITFALLS.md).
    directory and removes the tool. Add `--dry-run` to preview, `--keep-tool` to keep it.
    Use `--advisor-status none` only when no advisor role applies. Use `unknown` when it has not
    been established; these are deliberately different states. If advisors apply, change the
-   generated metadata status to `declared` and list each name, GitHub login, and relationship.
+   generated metadata status to `declared` and list each name and relationship; add a GitHub login
+   when it is known.
 3. Edit `src/<module>/plugin.py`: the four `TODO` constants and `_make_replacement`.
 4. Replace `tests/fake_host.py` with a copy of the **verbatim** host code you replace, and keep the
    differential tests: they compare your replacement with that original on many random inputs.
