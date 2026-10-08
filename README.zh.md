@@ -50,7 +50,7 @@
 
 - `vLLM-HUST` 下的公开 canonical repository,不把私有来源仓库或本地路径写成主仓;
 - 至少一位直接负责人;
-- 指导关系明确为 `none`、`unknown`,或 `declared` 且列出姓名、GitHub 账号和关系;
+- 指导关系明确为 `none`、`unknown`,或 `declared` 且列出姓名和关系;GitHub 账号在已知时填写,不得猜测;
 - `default_enabled: false`、启用契约和回滚契约;
 - 单一机制范围与 workload-qualified 证据;
 - 任何性能结论都绑定父仓与依赖提交、dirty 状态、硬件、模型、运行环境、图模式、

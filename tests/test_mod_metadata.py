@@ -37,7 +37,19 @@ def test_mod_metadata_is_explicit_and_safe():
     else:
         assert advisors
         for advisor in advisors:
-            assert set(advisor) == {"name", "github", "relationship"}
+            assert (
+                {"name", "relationship"}
+                <= set(advisor)
+                <= {
+                    "name",
+                    "github",
+                    "relationship",
+                }
+            )
+            assert advisor["name"].strip()
+            assert advisor["relationship"].strip()
+            if "github" in advisor:
+                assert GITHUB_RE.fullmatch(advisor["github"])
 
     assert metadata["lifecycle"]["default_enabled"] is False
     assert metadata["evidence"]["qualification"] in {
