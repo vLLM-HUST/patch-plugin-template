@@ -26,6 +26,11 @@ spawn 出来的是全新解释器,不会跑 vLLM 的插件加载。症状:`insta
 `resource_claims` 把被替换的函数声明为**独占**资源(资源名取宿主函数,不要取插件自己的名字),管理器就能在启动前拒绝
 这种组合。0.3 目前是实验版本、处于兼容性冻结,升级前先确认机器上装的 `vllm-hust-ext` 能读 0.3。
 
+## 4.2 `license = "Apache-2.0"` 需要 setuptools >= 77
+`[project] license` 写成 SPDX 字符串(而不是 `{text = ...}` 或 `{file = ...}`)要求 setuptools 77 及以上。
+`[build-system] requires` 的下限写低了,在 pip 隔离构建里不会暴露(它默认拉最新版),但固定了旧版 setuptools 的环境会
+直接 `metadata-generation-failed`。实测 76.1.0 失败、77.0.3 通过。`tests/test_pyproject.py` 把这个下限钉住。
+
 ## 5. 微基准会高估收益
 在合成输入上测出几十倍加速,不代表真实服务里有收益。真实输入往往小得多(这个函数本来就只要几毫秒)。
 **在真实服务里给各阶段分段计时**,看你优化的那一段占总耗时多少。那一段占 0.4%,再快 50 倍也只省 0.4%。
